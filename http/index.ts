@@ -6,6 +6,7 @@ export {
   endpoints,
   authEndpoints,
   userEndpoints,
+  generationsEndpoints,
   getBaseUrl,
   type Endpoints,
 } from './endpoints';
@@ -26,4 +27,9 @@ export type {
   ValidationError,
   LoginRequest,
   UpdateProfileRequest,
+  GenerationSettings,
+  Generation,
+  CreateGenerationRequest,
+  CreateGenerationResponse,
+  GenerationsListResponse,
 } from './types';

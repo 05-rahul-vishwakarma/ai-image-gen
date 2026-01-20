@@ -14,11 +14,18 @@ export const endpoints = {
     sessions: `${BASE_URL}/api/user/sessions`,
     session: (sessionId: string) => `${BASE_URL}/api/user/sessions/${sessionId}`,
   },
+
+  // Generation APIs
+  generations: {
+    list: `${BASE_URL}/api/generations`,
+    create: `${BASE_URL}/api/generations`,
+  },
 } as const;
 
 export const {
   auth: authEndpoints,
   user: userEndpoints,
+  generations: generationsEndpoints,
 } = endpoints;
 
 export const getBaseUrl = () => BASE_URL;

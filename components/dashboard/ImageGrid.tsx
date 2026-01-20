@@ -1,17 +1,48 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Download, Trash2, Image as ImageIcon } from 'lucide-react'
 import { useImagesStore } from '@/lib/stores/imagesStore'
+import { useGenerationsList } from '@/hooks'
 import { staggerContainer, staggerItem } from '@/lib/utils/animations'
 import toast from 'react-hot-toast'
 import Image from 'next/image'
+import { GeneratedImage } from '@/types'
 
 export const ImageGrid: React.FC = () => {
-  const { images, removeImage } = useImagesStore()
+  const { images, removeImage, setImages } = useImagesStore()
+  const { fetchGenerations } = useGenerationsList()
 
-  const handleDownload = async (url: string, prompt: string) => {
+  // Fetch existing generations on mount
+  useEffect(() => {
+    const loadGenerations = async () => {
+      try {
+        const generations = await fetchGenerations()
+
+        // Map API response to GeneratedImage format
+        const mappedImages: GeneratedImage[] = generations.map((gen) => ({
+          id: gen.id,
+          prompt: gen.prompt,
+          url: gen.image_url,
+          timestamp: new Date(gen.created_at).getTime(),
+          size: `${gen.settings.width}x${gen.settings.height}`,
+          quality: 'standard',
+          model: 'default',
+        }))
+
+        // Update store with fetched images
+        setImages(mappedImages)
+      } catch (error) {
+        console.error('Failed to load generations:', error)
+      }
+    }
+
+    loadGenerations()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleDownload = async (url: string) => {
     try {
       const response = await fetch(url)
       const blob = await response.blob()
@@ -66,7 +97,6 @@ export const ImageGrid: React.FC = () => {
             exit={{ opacity: 0, scale: 0.9 }}
             className="group relative glass-card overflow-hidden rounded-xl"
           >
-            {/* Image */}
             <div className="relative aspect-square">
               <Image
                 src={image.url}
@@ -76,7 +106,6 @@ export const ImageGrid: React.FC = () => {
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
 
-              {/* Overlay on hover */}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-4">
                 <p className="text-white text-sm line-clamp-3">
                   {image.prompt}
@@ -88,7 +117,7 @@ export const ImageGrid: React.FC = () => {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleDownload(image.url, image.prompt)}
+                      onClick={() => handleDownload(image.url)}
                       className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
                     >
                       <Download className="h-4 w-4 text-white" />
@@ -104,7 +133,6 @@ export const ImageGrid: React.FC = () => {
               </div>
             </div>
 
-            {/* Info bar */}
             <div className="p-3 border-t border-[var(--border)]">
               <p className="text-xs text-[var(--muted)] truncate">
                 {new Date(image.timestamp).toLocaleString()}

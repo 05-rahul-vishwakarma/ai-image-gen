@@ -95,3 +95,37 @@ export interface UpdateProfileRequest {
   name?: string;
   avatar?: string;
 }
+
+// Generation types
+export interface GenerationSettings {
+  width: number;
+  height: number;
+}
+
+export interface Generation {
+  id: string;
+  prompt: string;
+  image_url: string;
+  settings: GenerationSettings;
+  created_at: string;
+  user_id: string;
+}
+
+// Generation request
+export interface CreateGenerationRequest {
+  prompt: string;
+  settings: GenerationSettings;
+}
+
+// Generation responses
+export interface CreateGenerationResponse {
+  success: boolean;
+  message: string;
+  data: Generation;
+}
+
+export interface GenerationsListResponse {
+  success: boolean;
+  message: string;
+  data: Generation[];
+}

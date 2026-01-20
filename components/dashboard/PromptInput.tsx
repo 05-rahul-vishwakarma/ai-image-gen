@@ -6,6 +6,7 @@ import { Sparkles, Wand2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useImagesStore } from '@/lib/stores/imagesStore'
 import { useSettingsStore } from '@/lib/stores/settingsStore'
+import { useCreateGeneration } from '@/hooks'
 import { GeneratedImage } from '@/types'
 import toast from 'react-hot-toast'
 
@@ -13,13 +14,12 @@ export const PromptInput: React.FC = () => {
   const {
     currentPrompt,
     setCurrentPrompt,
-    isGenerating,
-    setIsGenerating,
     addImage,
     addToHistory,
   } = useImagesStore()
 
   const { imageSize, imageQuality, aiModel } = useSettingsStore()
+  const { generate, isLoading: isGenerating } = useCreateGeneration()
   const [prompt, setPrompt] = useState(currentPrompt)
 
   useEffect(() => {
@@ -32,25 +32,30 @@ export const PromptInput: React.FC = () => {
       return
     }
 
-    setIsGenerating(true)
     setCurrentPrompt(prompt)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const sizeDimensions = imageSize === '1024x1024' ? 1024 : 512
 
-      // Mock generated image
-      const mockImage: GeneratedImage = {
-        id: Date.now().toString(),
+      const response = await generate({
         prompt: prompt,
-        url: `https://picsum.photos/seed/${Date.now()}/1024/1024`,
+        settings: {
+          width: sizeDimensions,
+          height: sizeDimensions,
+        },
+      })
+
+      const generatedImage: GeneratedImage = {
+        id: response.data.id,
+        prompt: prompt,
+        url: response.data.image_url,
         timestamp: Date.now(),
         size: imageSize,
         quality: imageQuality,
         model: aiModel,
       }
 
-      addImage(mockImage)
+      addImage(generatedImage)
       addToHistory({
         id: Date.now().toString(),
         prompt: prompt,
@@ -59,10 +64,13 @@ export const PromptInput: React.FC = () => {
       })
 
       toast.success('Image generated successfully!')
+
+      // Clear the prompt after successful generation
+      setPrompt('')
+      setCurrentPrompt('')
     } catch (error) {
+      console.error('Generation error:', error)
       toast.error('Failed to generate image')
-    } finally {
-      setIsGenerating(false)
     }
   }
 
@@ -131,7 +139,6 @@ export const PromptInput: React.FC = () => {
           </Button>
         </div>
 
-        {/* Suggestions */}
         <div className="mt-6">
           <p className="text-sm font-medium text-[var(--muted)] mb-3">
             Try these prompts:

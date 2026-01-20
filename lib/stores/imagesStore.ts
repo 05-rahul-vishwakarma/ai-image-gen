@@ -8,6 +8,7 @@ interface ImagesState {
   isGenerating: boolean
   currentPrompt: string
   addImage: (image: GeneratedImage) => void
+  setImages: (images: GeneratedImage[]) => void
   addToHistory: (item: PromptHistoryItem) => void
   setCurrentPrompt: (prompt: string) => void
   setIsGenerating: (isGenerating: boolean) => void
@@ -28,6 +29,10 @@ export const useImagesStore = create<ImagesState>()(
         set((state) => ({
           images: [image, ...state.images],
         }))
+      },
+
+      setImages: (images: GeneratedImage[]) => {
+        set({ images })
       },
 
       addToHistory: (item: PromptHistoryItem) => {

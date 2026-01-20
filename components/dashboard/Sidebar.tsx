@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, PlusCircle, Clock, Image as ImageIcon, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { useImagesStore } from '@/lib/stores/imagesStore'
+import { useGenerationsList } from '@/hooks'
 import { UserMenu } from './UserMenu'
 
 interface SidebarProps {
@@ -14,7 +15,14 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsClick }) => {
-  const { history, setCurrentPrompt, clearHistory } = useImagesStore()
+  const { setCurrentPrompt } = useImagesStore()
+  const { generations, fetchGenerations, isLoading } = useGenerationsList()
+
+  // Fetch generations on mount
+  useEffect(() => {
+    fetchGenerations()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
 
   const handleHistoryClick = (prompt: string) => {
@@ -31,8 +39,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsCli
     }
   }
 
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp)
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()
     const diffMins = Math.floor(diffMs / 60000)
@@ -113,18 +121,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsCli
             <h3 className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider">
               Your History
             </h3>
-            {history.length > 0 && (
-              <button
-                onClick={clearHistory}
-                className="text-xs text-[var(--muted)] hover:text-[var(--text)] transition-colors"
-              >
-                Clear
-              </button>
-            )}
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar px-2 pb-2 space-y-1">
-            {history.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-12 px-4">
+                <Clock className="h-10 w-10 text-[var(--muted)] mx-auto mb-3 opacity-30 animate-spin" />
+                <p className="text-[var(--muted)] text-xs">
+                  Loading history...
+                </p>
+              </div>
+            ) : generations.length === 0 ? (
               <div className="text-center py-12 px-4">
                 <Clock className="h-10 w-10 text-[var(--muted)] mx-auto mb-3 opacity-30" />
                 <p className="text-[var(--muted)] text-xs">
@@ -132,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsCli
                 </p>
               </div>
             ) : (
-              history.map((item) => (
+              generations.map((item) => (
                 <motion.button
                   key={item.id}
                   onClick={() => handleHistoryClick(item.prompt)}
@@ -143,9 +150,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsCli
                     {item.prompt}
                   </p>
                   <div className="flex items-center gap-2 text-xs text-[var(--muted)]">
-                    <span>{item.imageCount} img</span>
+                    <span>{item.settings.width}x{item.settings.height}</span>
                     <span>•</span>
-                    <span>{formatDate(item.timestamp)}</span>
+                    <span>{formatDate(item.created_at)}</span>
                   </div>
                 </motion.button>
               ))

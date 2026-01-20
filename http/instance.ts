@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getBaseUrl } from './endpoints';
 
 // Create axios instance with default config
+
 export const apiClient = axios.create({
   baseURL: getBaseUrl(),
   withCredentials: true,
@@ -20,6 +21,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('auth:logout'));
+        window.location.href = '/auth';
       }
     }
 

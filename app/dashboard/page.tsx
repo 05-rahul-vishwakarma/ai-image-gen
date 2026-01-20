@@ -9,15 +9,13 @@ export default function DashboardPage() {
   return (
     <PageTransition>
       <div className="h-full flex flex-col">
-        {/* Main content area - ChatGPT style centered layout */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+          <div className="max-w-5xl mx-auto px-4 py-8">
             <ImageGrid />
           </div>
         </div>
 
-        {/* Bottom prompt input - fixed at bottom like ChatGPT */}
-        <div className="border-t border-[var(--border)] bg-[var(--bg)]">
+        <div className="bg-[var(--bg)]">
           <div className="max-w-5xl mx-auto px-4 py-6">
             <PromptInput />
           </div>
