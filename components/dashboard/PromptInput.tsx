@@ -139,7 +139,7 @@ export const PromptInput: React.FC = () => {
           </Button>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 lg:block hidden  ">
           <p className="text-sm font-medium text-[var(--muted)] mb-3">
             Try these prompts:
           </p>
