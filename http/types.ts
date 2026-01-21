@@ -129,3 +129,9 @@ export interface GenerationsListResponse {
   message: string;
   data: Generation[];
 }
+
+export interface GenerationResponse {
+  success: boolean;
+  message: string;
+  data: Generation;
+}

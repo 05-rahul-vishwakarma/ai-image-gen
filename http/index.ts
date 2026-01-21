@@ -32,4 +32,5 @@ export type {
   CreateGenerationRequest,
   CreateGenerationResponse,
   GenerationsListResponse,
+  GenerationResponse,
 } from './types';

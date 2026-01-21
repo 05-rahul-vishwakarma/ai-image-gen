@@ -3,6 +3,7 @@ import type {
   CreateGenerationRequest,
   CreateGenerationResponse,
   GenerationsListResponse,
+  GenerationResponse,
 } from '@/http';
 
 /**
@@ -24,6 +25,16 @@ export const createGeneration = async (
 export const getGenerations = async (): Promise<GenerationsListResponse> => {
   const response = await apiClient.get<GenerationsListResponse>(
     endpoints.generations.list
+  );
+  return response.data;
+};
+
+/**
+ * Get a specific generation by ID
+ */
+export const getGenerationById = async (id: string): Promise<GenerationResponse> => {
+  const response = await apiClient.get<GenerationResponse>(
+    endpoints.generations.byId(id)
   );
   return response.data;
 };

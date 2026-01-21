@@ -8,7 +8,7 @@ export { useProfile, useUpdateProfile } from './useUserProfile';
 export { useSessions, useRevokeSession, useRevokeAllSessions } from './useSessions';
 
 // Generation hooks
-export { useCreateGeneration, useGenerationsList } from './useGenerations';
+export { useCreateGeneration, useGenerationsList, useGenerationById } from './useGenerations';
 
 // UI hooks
 export { useAuthGuard } from './useAuthGuard';

@@ -19,6 +19,7 @@ export const endpoints = {
   generations: {
     list: `${BASE_URL}/api/generations`,
     create: `${BASE_URL}/api/generations`,
+    byId: (id: string) => `${BASE_URL}/api/generations/${id}`,
   },
 } as const;
 

@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, PlusCircle, Clock, Image as ImageIcon, Settings } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
 import { useImagesStore } from '@/lib/stores/imagesStore'
 import { useGenerationsList } from '@/hooks'
@@ -15,6 +16,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsClick }) => {
+  const router = useRouter()
   const { setCurrentPrompt } = useImagesStore()
   const { generations, fetchGenerations, isLoading } = useGenerationsList()
 
@@ -25,8 +27,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsCli
   }, [])
 
 
-  const handleHistoryClick = (prompt: string) => {
+  const handleHistoryClick = (id: string, prompt: string) => {
     setCurrentPrompt(prompt)
+    router.push(`/dashboard/${id}`)
     if (window.innerWidth < 1024) {
       onClose()
     }
@@ -142,7 +145,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onSettingsCli
               generations.map((item) => (
                 <motion.button
                   key={item.id}
-                  onClick={() => handleHistoryClick(item.prompt)}
+                  onClick={() => handleHistoryClick(item.id, item.prompt)}
                   className="w-full text-left px-3 py-2 rounded-lg hover:bg-[var(--bg)] transition-colors group"
                   whileHover={{ x: 2 }}
                 >
